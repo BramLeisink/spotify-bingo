@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Spotify Recent Songs</title>
+  <script src="https://sdk.scdn.co/spotify-player.js"></script>
+</head>
+<body>
+  <h1>Spotify Recent Songs</h1>
+
+  <div id="login">
+    <button onclick="login()">Log in with Spotify</button>
+  </div>
+
+  <div id="loggedin" style="display: none;">
+    <h2>Welcome, <span id="displayname"></span>!</h2>
+    <button onclick="getRecentlyPlayed()">Get Recently Played Songs</button>
+    <ul id="songlist"></ul>
+  </div>
+
+  <script>
+    // Spotify API credentials
+    const clientId = '524426dd0758495eb183b9073bea7ff4';
+    const redirectUri = 'http://192.168.0.116:5500/recent.html';
+
+    // Create a new Spotify Player instance
+    const player = new Spotify.Player({
+      name: 'Spotify Recent Songs',
+      getOAuthToken: callback => {
+        // Fetch access token from the server
+        const accessToken = getAccessToken();
+        callback(accessToken);
+      },
+      volume: 0.5
+    });
+
+    // Log in to Spotify
+    function login() {
+      const scope = 'user-read-recently-played';
+      window.location = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}`;
+    }
+
+    // Retrieve access token from URL fragment
+    function getAccessToken() {
+      const fragment = new URLSearchParams(window.location.hash.slice(1));
+      return fragment.get('access_token');
+    }
+
+    // Get user's recently played songs
+    function getRecentlyPlayed() {
+      const accessToken = getAccessToken();
+      fetch('https://api.spotify.com/v1/me/player/recently-played', {
+        headers: {
+          'Authorization': 'Bearer ' + accessToken
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        const songs = data.items;
+        const songList = document.getElementById('songlist');
+        songList.innerHTML = '';
+        songs.forEach(song => {
+          const listItem = document.createElement('li');
+          listItem.textContent = song.track.name;
+          songList.appendChild(listItem);
+        });
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+
+    // Event listener for successful Spotify player initialization
+    player.addListener('ready', ({ device_id }) => {
+      console.log('Ready with Device ID', device_id);
+    });
+
+    // Event listener for authentication errors
+    player.addListener('authentication_error', ({ message }) => {
+      console.error('Authentication Error', message);
+    });
+
+    // Render the login status
+    window.onload = function() {
+      const accessToken = getAccessToken();
+      if (accessToken) {
+        document.getElementById('login').style.display = 'none';
+        document.getElementById('loggedin').style.display = 'block';
+
+        // Get the user's display name
+        fetch('https://api.spotify.com/v1/me', {
+          headers: {
+            'Authorization': 'Bearer ' + accessToken
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('displayname').textContent = data.display_name;
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+
+        // Initialize the Spotify Player
+        player.connect();
+      } else {
+        document.getElementById('login').style.display = 'block';
+        document.getElementById('loggedin').style.display = 'none';
+      }
+    };
+  </script>
+</body>
+</html>

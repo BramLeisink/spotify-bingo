@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+  <style>
+    body {
+      background-color: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 4px solid #1DB954;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="loading"></div>
+
+  <script>
+    // Get the access token from the URL hash
+    var params = new URLSearchParams(window.location.hash.substr(1));
+    var accessToken = params.get('access_token');
+
+    // Store the access token in the cache
+    localStorage.setItem('accessToken', accessToken);
+
+    // Redirect to index.html
+    window.location.href = 'index.html';
+  </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Album Details</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #000;
+    }
+
+    .album-image {
+      width: 300px;
+      height: 300px;
+      position: relative;
+    }
+
+    .album-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: blur(10px);
+    }
+
+    .album-details {
+      margin-top: 20px;
+      text-align: center;
+      color: #fff;
+    }
+
+    .album-details h1 {
+      font-size: 24px;
+      margin: 0;
+      padding: 0;
+    }
+
+    .album-details p {
+      font-size: 16px;
+      margin: 5px 0;
+      padding: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="album-image">
+      <img src="https://i.scdn.co/image/ab67616d0000b273cab7ae4868e9f9ce6bdfdf43" alt="Album Cover">
+    </div>
+    <div class="album-details">
+      <h1>Album Name</h1>
+      <p>Artist Name</p>
+    </div>
+  </div>
+</body>
+
+</html>
