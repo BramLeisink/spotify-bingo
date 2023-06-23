@@ -14,7 +14,7 @@ function getHashParams() {
 
 function loginWithSpotify() {
   var client_id = '524426dd0758495eb183b9073bea7ff4';
-  var redirect_uri = 'http://127.0.0.1:5500/index.html';
+  var redirect_uri = 'http://127.0.0.1:5500/login.html'; // Change the redirect URI to login.html
 
   var url = 'https://accounts.spotify.com/authorize';
   url += '?response_type=token';
@@ -42,16 +42,21 @@ function enableTrackingButtons() {
   var stopButton = document.getElementById('stop-button');
 
   if (accessToken) {
+    trackButton.style.display = isTracking ? 'none' : 'inline-block';
+    stopButton.style.display = isTracking ? 'inline-block' : 'none';
     trackButton.disabled = isTracking;
     stopButton.disabled = !isTracking;
   } else {
-    trackButton.disabled = true;
+    trackButton.style.display = 'none';
+    stopButton.style.display = 'none';
   }
 }
 
 function startTracking() {
   isTracking = true;
   enableTrackingButtons();
+  var startTime = new Date().toLocaleTimeString();
+  localStorage.setItem('startTrackingTime', startTime);
 }
 
 function stopTracking() {
@@ -60,6 +65,7 @@ function stopTracking() {
   clearCurrentlyPlaying();
   trackedSongs = [];
   displayTrackedSongs();
+  localStorage.removeItem('startTrackingTime');
 }
 
 function clearCurrentlyPlaying() {
@@ -94,8 +100,7 @@ function displayTrackedSongs() {
 }
 
 function displayUserInfo() {
-  var params = getHashParams();
-  accessToken = params.access_token;
+  accessToken = localStorage.getItem('accessToken');
 
   if (accessToken) {
     var headers = {
@@ -117,12 +122,19 @@ function displayUserInfo() {
         }
 
         enableTrackingButtons();
+      })
+      .finally(function() {
+        fetchCurrentlyPlayingSong();
       });
-
-    document.getElementById('track-button').addEventListener('click', startTracking);
-    document.getElementById('stop-button').addEventListener('click', stopTracking);
-    fetchCurrentlyPlayingSong();
   } else {
+    enableTrackingButtons();
+  }
+
+  var startTrackingTime = localStorage.getItem('startTrackingTime');
+  if (startTrackingTime) {
+    console.log('Start tracking time:', startTrackingTime);
+    console.log('Access token:', accessToken);
+    isTracking = true;
     enableTrackingButtons();
   }
 }
@@ -175,11 +187,15 @@ function fetchCurrentlyPlayingSong() {
 document.getElementById('login-button').addEventListener('click', function() {
   if (accessToken) {
     if (confirm('Are you sure you want to log out?')) {
+      localStorage.removeItem('accessToken'); // Remove access token from cache on logout
       logout();
     }
   } else {
     loginWithSpotify();
   }
 });
+
+document.getElementById('track-button').addEventListener('click', startTracking);
+document.getElementById('stop-button').addEventListener('click', stopTracking);
 
 window.addEventListener('load', displayUserInfo);
