@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Spotify Login</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <div id="container">
+    <div id="header">
+      <h1>Spotify Bingo</h1>
+      <button id="login-button">Log in with Spotify</button>
+    </div>
+
+    <div id="main">
+      <div id="user-info">
+        <div id="currently-playing">
+          <img id="album-cover" src="" alt="Album Cover">
+          <div id="song-details">
+            <p id="song-name"></p>
+            <p id="artist-name"></p>
+          </div>
+        </div>
+      </div>
+
+      <div id="tracking-controls">
+        <button id="track-button" disabled>Start Tracking</button>
+        <button id="stop-button" disabled>Stop Tracking</button>
+      </div>
+
+      <div id="tracked-songs">
+        <h2>Previously Played Songs</h2>
+        <ul id="songs-list"></ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background-color: #000;
+  color: #fff;
+}
+
+#container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px;
+}
+
+#header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+h1 {
+  font-size: 32px;
+  color: #1DB954;
+}
+
+button {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  background-color: #1DB954;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+#main {
+  text-align: center;
+}
+
+#user-info {
+  margin-bottom: 40px;
+}
+
+#display-name {
+  font-size: 24px;
+  color: #1DB954;
+  margin-bottom: 10px;
+}
+
+#currently-playing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+#album-cover {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  margin-right: 40px;
+  border-radius: 5%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+#song-details {
+  text-align: left;
+}
+
+#song-name {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+#artist-name {
+  font-size: 16px;
+  color: #999;
+}
+
+#tracking-controls {
+  margin-bottom: 40px;
+}
+
+#track-button,
+#stop-button {
+  padding: 12px 30px;
+  margin:5px 5px;
+  width: 200px;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  background-color: #1DB954;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#track-button:disabled,
+#stop-button:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}
+
+#track-button:hover,
+#stop-button:hover {
+  background-color: #198943;
+}
+
+#tracked-songs {
+  text-align: left;
+}
+
+h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+#songs-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.album-cover-small {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 5%;
+  margin-right: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.song-details-small {
+  flex-grow: 1;
+}
+
+.song-details-small p {
+  margin: 0;
+}
+
+/* Media Query for Mobile */
+@media (max-width: 600px) {
+  #container {
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  #album-cover {
+    max-width: 50vw;
+    height: auto;
+    margin-right: 20px;
+  }
+
+  #song-name {
+    font-size: 20px;
+  }
+
+  #artist-name {
+    font-size: 14px;
+  }
+
+  #tracking-controls {
+    margin-bottom: 30px;
+  }
+
+  #user-info {
+    margin-bottom: 30px;
+  }
+}
+
+@media (max-width: 470px) {
+    #tracking-controls {
+      display: flex;
+      flex-direction: column;
+    }
+  
+    #track-button,
+    #stop-button {
+      width: 100%;
+    }
+  }
