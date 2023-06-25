@@ -42,8 +42,8 @@ function enableTrackingButtons() {
   var stopButton = document.getElementById('stop-button');
 
   if (accessToken) {
-    trackButton.style.display = isTracking ? 'none' : 'inline-block';
-    stopButton.style.display = isTracking ? 'inline-block' : 'none';
+    trackButton.style.display = 'inline-block';
+    stopButton.style.display = 'inline-block';
     trackButton.disabled = isTracking;
     stopButton.disabled = !isTracking;
   } else {
