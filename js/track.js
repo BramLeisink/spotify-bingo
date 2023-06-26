@@ -14,7 +14,7 @@ function getHashParams() {
 
 function loginWithSpotify() {
   var client_id = '524426dd0758495eb183b9073bea7ff4';
-  var redirect_uri = 'http://127.0.0.1:5500/login.html'; // Change the redirect URI to login.html
+  var redirect_uri = 'https://bramleisink.github.io/spotify-bingo/login.html';
 
   var url = 'https://accounts.spotify.com/authorize';
   url += '?response_type=token';
