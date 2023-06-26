@@ -1,18 +1,64 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Login</title>
   <style>
+    @import url('https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap');
+
     body {
-      background-color: black;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
+      font-family: 'Montserrat', sans-serif;
+      background-color: #191414;
+      color: #fff;
+    }
+    
+    a {
+      color: #1DB954;
     }
 
-    .loading {
-      display: inline-block;
+    .spotify-bingo-logo {
+      color: rgba(29, 185, 84, 1);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 4rem;
+      text-align: center;
+      margin: 5px;
+    }
+
+    p {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 20px;
+      font-weight: 500;
+      text-align: center;
+      margin-bottom: 3px;
+    }
+
+    #confirm-login {
+      width: 700px;
+      margin: auto;
+      text-align: center;
+    }
+
+    #agree {
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      text-decoration: none;
+      width: 300px;
+      height: 50px;
+      border-radius: 25px;
+      background-color: rgba(29, 185, 84, 1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 20px auto;
+    }
+
+    #loading {
+      display: none;
       width: 40px;
       height: 40px;
       border: 4px solid #1DB954;
@@ -25,25 +71,55 @@
       0% {
         transform: rotate(0deg);
       }
+
       100% {
         transform: rotate(360deg);
       }
     }
   </style>
 </head>
+
 <body>
-  <div class="loading"></div>
+  <div id="loading"></div>
+  <div id="confirm-login">
+    <p>A short notice from:</p>
+    <h1 class="spotify-bingo-logo">Spotify Bingo</h1>
+    <p>Let the rhythm flow seamlessly into your music bingo journey as you connect your Spotify account to our app. Rest
+      assured, our application is all about good vibes and respects your Spotify account privacy, so there won't be any
+      unexpected changes.
+    </p>
+    <p>
+      And hey, if you're feeling adventurous, you can even explore the open-source code on <a href="https://github.com/BramLeisink/spotify-bingo">GitHub</a> to see the magic
+      behind the scenes. So, get ready to crank up the volume, dive into your favorite playlists, and let the harmony of
+      music and bingo create a symphony of joy and excitement!</p>
+    <a id="agree" href="#" onclick="login()">Agree and login</a>
+  </div>
 
   <script>
-    // Get the access token from the URL hash
-    var params = new URLSearchParams(window.location.hash.substr(1));
-    var accessToken = params.get('access_token');
+    // Check if the access token is present in the URL hash
+    if (window.location.hash) {
+      // Get the access token from the URL hash
+      var params = new URLSearchParams(window.location.hash.substr(1));
+      var accessToken = params.get('access_token');
 
-    // Store the access token in the cache
-    localStorage.setItem('accessToken', accessToken);
+      // Store the access token in the cache
+      localStorage.setItem('accessToken', accessToken);
 
-    // Redirect to index.html
-    window.location.href = 'index.html';
+      window.location.href = 'index.html';
+    } else {
+      var loading = document.getElementById('loading')
+      // Redirect the user to the Spotify authorization page
+      loading.style.display = 'none';
+    }
+
+    function login() {
+      var clientId = '524426dd0758495eb183b9073bea7ff4';
+      var redirectUri = 'https://bramleisink.github.io/spotify-bingo/login.html'; // Replace with your actual redirect URI
+
+      window.location.href = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&redirect_uri=${encodeURIComponent(redirectUri)}`;
+    }
+
   </script>
 </body>
+
 </html>

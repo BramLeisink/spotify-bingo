@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Playlist Search</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap');
+    /* CSS styling for the page */
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #191414;
+      color: #fff;
+    }
+
+    .spotify-bingo-logo {
+      width: 100%;
+      color: rgba(29, 185, 84, 1);
+      font-family: 'Montserrat';
+      font-style: normal;
+      font-size: 4rem;
+      text-align: center;
+    }
+
+    #container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h1 {
+      color: rgba(29, 185, 84, 1);
+      font-family: 'Montserrat';
+      font-style: normal;
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-size: 18px;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
+      outline: none;
+      width: 200px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 5px;
+      background-color: rgba(29, 185, 84, 1);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: rgba(29, 185, 84, 0.8);
+    }
+
+    #results {
+      margin-top: 20px;
+    }
+
+    .playlist-card {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+
+    .playlist-image {
+      width: 100px;
+      height: 100px;
+      margin-right: 10px;
+    }
+
+    .playlist-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+
+    .playlist-details {
+      flex: 1;
+    }
+
+    .playlist-name {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .playlist-description {
+      font-size: 14px;
+      color: #888;
+      margin: 5px 0;
+    }
+
+    .no-results {
+      font-size: 16px;
+      font-style: italic;
+      color: #888;
+      margin-top: 10px;
+    }
+  </style>
+  <script src="https://sdk.scdn.co/spotify-player.js"></script>
+</head>
+
+<body>
+  <div id="container">
+    <h1 class="spotify-bingo-logo">Playlist Search</h1>
+    <div>
+      <label for="search-input">Search for a Playlist:</label>
+      <input type="text" id="search-input" placeholder="Enter a keyword">
+      <button id="search-button">Search</button>
+    </div>
+    <div id="results"></div>
+  </div>
+
+  <script>
+    var accessToken = localStorage.getItem('accessToken');
+
+    function searchPlaylists() {
+      var searchInput = document.getElementById('search-input').value;
+
+      fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(searchInput)}&type=playlist`, {
+        headers: {
+          'Authorization': 'Bearer ' + accessToken
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          var resultsContainer = document.getElementById('results');
+          resultsContainer.innerHTML = '';
+
+          if (data.playlists && data.playlists.items.length > 0) {
+            // Separate user-created playlists and other playlists
+            var userPlaylists = [];
+            var otherPlaylists = [];
+
+            data.playlists.items.forEach(item => {
+              if (item.owner.id === 'USER_ID') {
+                userPlaylists.push(item);
+              } else {
+                otherPlaylists.push(item);
+              }
+            });
+
+            // Display user-created playlists first
+            userPlaylists.forEach(item => {
+              displayPlaylistCard(item);
+            });
+
+            // Display other playlists
+            otherPlaylists.forEach(item => {
+              displayPlaylistCard(item);
+            });
+          } else {
+            var noResults = document.createElement('div');
+            noResults.className = 'no-results';
+            noResults.textContent = 'No playlists found.';
+            resultsContainer.appendChild(noResults);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+
+    function displayPlaylistCard(item) {
+      var resultsContainer = document.getElementById('results');
+
+      var playlistCard = document.createElement('div');
+      playlistCard.className = 'playlist-card';
+
+      // Create an image element for the playlist image
+      var playlistImage = document.createElement('div');
+      playlistImage.className = 'playlist-image';
+
+      var img = document.createElement('img');
+      img.src = item.images[0].url; // Assuming the playlist has at least one image
+      img.alt = 'Playlist Cover';
+
+      playlistImage.appendChild(img);
+      playlistCard.appendChild(playlistImage);
+
+      // Create a div for the playlist details
+      var playlistDetails = document.createElement('div');
+      playlistDetails.className = 'playlist-details';
+
+      // Create a heading for the playlist name
+      var playlistName = document.createElement('h3');
+      playlistName.className = 'playlist-name';
+      playlistName.textContent = item.name;
+      playlistDetails.appendChild(playlistName);
+
+      // Create a paragraph for the playlist description
+      var playlistDescription = document.createElement('p');
+      playlistDescription.className = 'playlist-description';
+      playlistDescription.textContent = item.description;
+      playlistDetails.appendChild(playlistDescription);
+
+      playlistCard.appendChild(playlistDetails);
+
+      // Add click event listener to save playlist ID and open playlist.html
+      playlistCard.addEventListener('click', function () {
+        var playlistId = item.id;
+        localStorage.setItem('selectedPlaylistId', playlistId);
+        window.location.href = 'playlist.html';
+      });
+
+      resultsContainer.appendChild(playlistCard);
+    }
+
+    document.getElementById('search-button').addEventListener('click', searchPlaylists);
+  </script>
+</body>
+
+</html>

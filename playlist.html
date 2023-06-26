@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Playlist Details</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap');
+
+        /* CSS styling for the page */
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #191414;
+            color: #fff;
+        }
+
+        #container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: rgba(29, 185, 84, 1);
+            font-family: 'Montserrat';
+            font-style: normal;
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .playlist-details {
+            margin-bottom: 20px;
+        }
+
+        .playlist-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+        }
+
+        .playlist-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .playlist-name {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .playlist-owner {
+            font-size: 16px;
+            text-align: center;
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        .playlist-description {
+            font-size: 14px;
+            text-align: center;
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        .tracks-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .track-item {
+            margin-bottom: 10px;
+        }
+
+        .track-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .track-artist {
+            font-size: 14px;
+            color: #888;
+            margin: 0;
+        }
+
+        .confirm-button {
+            display: block;
+            margin: 0 auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            background-color: rgba(29, 185, 84, 1);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .confirm-button:hover {
+            background-color: rgba(29, 185, 84, 0.8);
+        }
+    </style>
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
+</head>
+
+<body>
+    <div id="container">
+        <h1>Playlist Details</h1>
+        <div id="playlist-info" class="playlist-details"></div>
+        <div id="playlist-tracks" class="playlist-details"></div>
+        <button id="confirm-button" class="confirm-button">Confirm</button>
+    </div>
+
+    <script>
+        var accessToken = localStorage.getItem('accessToken');
+        var playlistId = localStorage.getItem('selectedPlaylistId');
+
+        function getPlaylistDetails() {
+            fetch(`https://api.spotify.com/v1/playlists/${playlistId}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + accessToken
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    var playlistInfoContainer = document.getElementById('playlist-info');
+                    playlistInfoContainer.innerHTML = '';
+
+                    // Create an image element for the playlist image
+                    var playlistImage = document.createElement('div');
+                    playlistImage.className = 'playlist-image';
+                    var img = document.createElement('img');
+                    img.src = data.images.length > 0 ? data.images[0].url :
+                        'placeholder.png'; // Placeholder image if no image available
+                    playlistImage.appendChild(img);
+                    playlistInfoContainer.appendChild(playlistImage);
+
+                    // Create a heading for the playlist name
+                    var playlistName = document.createElement('h2');
+                    playlistName.className = 'playlist-name';
+                    playlistName.textContent = data.name;
+                    playlistInfoContainer.appendChild(playlistName);
+
+                    // Create a paragraph for the playlist owner
+                    var playlistOwner = document.createElement('p');
+                    playlistOwner.className = 'playlist-owner';
+                    playlistOwner.textContent = 'By ' + data.owner.display_name;
+                    playlistInfoContainer.appendChild(playlistOwner);
+
+                    // Create a paragraph for the playlist description
+                    var playlistDescription = document.createElement('p');
+                    playlistDescription.className = 'playlist-description';
+                    playlistDescription.textContent = data.description;
+                    playlistInfoContainer.appendChild(playlistDescription);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        function getPlaylistTracks() {
+            fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+                headers: {
+                    'Authorization': 'Bearer ' + accessToken
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    var playlistTracksContainer = document.getElementById('playlist-tracks');
+                    playlistTracksContainer.innerHTML = '';
+
+                    if (data.items.length > 0) {
+                        var tracksList = document.createElement('ul');
+                        tracksList.className = 'tracks-list';
+
+                        data.items.forEach(item => {
+                            var trackItem = document.createElement('li');
+                            trackItem.className = 'track-item';
+
+                            // Create a heading for the track name
+                            var trackName = document.createElement('h3');
+                            trackName.className = 'track-name';
+                            trackName.textContent = item.track.name;
+                            trackItem.appendChild(trackName);
+
+                            // Create a paragraph for the track artist(s)
+                            var trackArtists = document.createElement('p');
+                            trackArtists.className = 'track-artist';
+                            trackArtists.textContent = item.track.artists.map(artist => artist.name).join(
+                                ', ');
+                            trackItem.appendChild(trackArtists);
+
+                            tracksList.appendChild(trackItem);
+                        });
+
+                        playlistTracksContainer.appendChild(tracksList);
+                    } else {
+                        var noTracks = document.createElement('p');
+                        noTracks.className = 'no-tracks';
+                        noTracks.textContent = 'No tracks found in the playlist.';
+                        playlistTracksContainer.appendChild(noTracks);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        function redirectToIndex() {
+            window.location.href = 'index.html';
+        }
+
+        getPlaylistDetails();
+        getPlaylistTracks();
+
+        document.getElementById('confirm-button').addEventListener('click', redirectToIndex);
+    </script>
+</body>
+
+</html>
