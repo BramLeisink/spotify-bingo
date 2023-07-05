@@ -115,6 +115,7 @@
     function login() {
       var clientId = '524426dd0758495eb183b9073bea7ff4';
       var redirectUri = 'https://bramleisink.github.io/spotify-bingo/login.html'; // Replace with your actual redirect URI
+      // var redirectUri = 'http://127.0.0.1:5500/login.html'
 
       window.location.href = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&redirect_uri=${encodeURIComponent(redirectUri)}`;
     }

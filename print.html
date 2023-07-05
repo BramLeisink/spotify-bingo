@@ -2,222 +2,269 @@
 <html>
 
 <head>
-    <title>Print</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
+  <title>Print</title>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
-        #container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
+body {
+  font-family: 'Montserrat', Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: #f4f4f4;
+}
 
-        h1 {
-            margin-top: 0;
-        }
+#container {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 
-        form {
-            margin-top: 20px;
-        }
+h1 {
+  margin-top: 0;
+  font-size: 2rem;
+  text-align: center;
+  color: #191414;
+  font-weight: 700;
+}
 
-        label {
-            display: block;
-            margin-bottom: 10px;
-        }
+form {
+  margin-top: 20px;
+}
 
-        input[type="number"] {
-            width: 100px;
-        }
+label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #191414;
+}
 
-        input[type="submit"] {
-            margin-top: 10px;
-        }
+input[type="number"] {
+  width: 100px;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  outline: none;
+}
 
-        .card {
-            page-break-inside: avoid;
-            /* Avoid grid items from breaking across pages */
-        }
+input[type="submit"] {
+  margin-top: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+  background-color: #1db954;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
 
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(var(--grid-size-x), 1fr);
-            grid-gap: 10px;
-            margin-top: 20px;
-        }
+input[type="submit"]:hover {
+  background-color: #198c3e;
+}
 
-        .grid-item {
-            padding: 10px;
-            background-color: #ddd;
-            border-radius: 5px;
-            text-align: center;
-        }
-    </style>
+.card {
+  page-break-inside: avoid;
+  padding: 3rem;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-size-x), 1fr);
+  grid-gap: 20px;
+  margin-top: 20px;
+}
+
+.grid-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background-color: #f4f4f4;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 16px;
+  color: #191414;
+  aspect-ratio: 1/1; /* Added line to make grid items square */
+}
+
+#download-btn {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+  background-color: #1db954;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+#download-btn:hover {
+  background-color: #198c3e;
+}
+
+  </style>
 </head>
 
 <body>
-    <div id="container">
-        <h1>Print</h1>
-        <form id="print-form">
-            <label for="num-songs">Number of Songs:</label>
-            <input type="number" id="num-songs" required>
-            <label for="grid-size-x">Grid Size X:</label>
-            <input type="number" id="grid-size-x" required>
-            <label for="grid-size-y">Grid Size Y:</label>
-            <input type="number" id="grid-size-y" required>
-            <label for="num-players">Number of Players:</label>
-            <input type="number" id="num-players" required>
-            <input type="submit" value="Generate Arrays">
-        </form>
-        <div id="grid-container"></div>
-        <button id="download-btn">Download PDF</button>
-    </div>
+  <div id="container">
+    <h1>Print</h1>
+    <form id="print-form">
+      <label for="num-songs">Number of Songs:</label>
+      <input type="number" id="num-songs" required>
+      <label for="grid-size-x">Grid Width:</label>
+      <input type="number" id="grid-size-x" value="4" required>
+      <label for="grid-size-y">Grid Height:</label>
+      <input type="number" id="grid-size-y" value="4" required>
+      <label for="num-players">Number of Players:</label>
+      <input type="number" id="num-players" value="20" required>
+      <input type="submit" value="Generate Arrays">
+    </form>
+    <button id="download-btn">Download PDF</button>
+    <div id="grid-container"></div>
+  </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.js"></script>
-    <script>
-        var allSongsArray = [];
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.js"></script>
+  <script>
+    var allSongsArray = [];
 
-        window.onload = async function () {
-            var playlistId = localStorage.getItem('selectedPlaylistId');
-            console.log('Playlist ID:', playlistId);
+    window.onload = async function () {
+      var playlistId = localStorage.getItem('selectedPlaylistId');
+      console.log('Playlist ID:', playlistId);
 
-            var accessToken = localStorage.getItem('accessToken');
+      var accessToken = localStorage.getItem('accessToken');
 
-            try {
-                const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}`, {
-                    headers: {
-                        'Authorization': 'Bearer ' + accessToken
-                    }
-                });
-                const data = await response.json();
-                var numSongsInput = document.getElementById('num-songs');
-                var numSongs = data.tracks.total;
-                numSongsInput.value = numSongs;
+      try {
+        const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}`, {
+          headers: {
+            'Authorization': 'Bearer ' + accessToken
+          }
+        });
+        const data = await response.json();
+        var numSongsInput = document.getElementById('num-songs');
+        var numSongs = data.tracks.total;
+        numSongsInput.value = numSongs;
 
-                // Generate array based on all songs in the playlist
-                data.tracks.items.forEach(function (item) {
-                    var songId = item.track.id;
-                    allSongsArray.push(songId);
-                });
-
-                // Format all songs in the allSongsArray
-                allSongsFormattedArray = await Promise.all(allSongsArray.map(getFormattedSong));
-
-                console.log('All Songs Array:', allSongsArray);
-                console.log('All Songs Formatted Array:', allSongsFormattedArray);
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        };
-
-
-        document.getElementById('print-form').addEventListener('submit', async function (event) {
-            event.preventDefault();
-
-            var numSongs = parseInt(document.getElementById('num-songs').value);
-            var gridSizeX = parseInt(document.getElementById('grid-size-x').value);
-            var gridSizeY = parseInt(document.getElementById('grid-size-y').value);
-            var numPlayers = parseInt(document.getElementById('num-players').value);
-
-            var gridContainer = document.getElementById('grid-container');
-            gridContainer.innerHTML = '';
-
-            for (var i = 1; i <= numPlayers; i++) {
-                var array = await generateArray(gridSizeX, gridSizeY, numSongs);
-
-                var card = document.createElement('div');
-                card.className = 'card';
-
-                var playerLabel = document.createElement('h3');
-                playerLabel.textContent = 'Player ' + i;
-
-                var grid = document.createElement('div');
-                grid.className = 'grid-container';
-                grid.style.setProperty('--grid-size-x', gridSizeX);
-                grid.style.setProperty('--grid-size-y', gridSizeY);
-
-                array.forEach(function (item) {
-                    var gridItem = document.createElement('div');
-                    gridItem.className = 'grid-item';
-                    gridItem.textContent = item;
-                    grid.appendChild(gridItem);
-                });
-
-                card.appendChild(playerLabel);
-                card.appendChild(grid);
-                gridContainer.appendChild(card);
-            }
+        // Generate array based on all songs in the playlist
+        data.tracks.items.forEach(function (item) {
+          var songId = item.track.id;
+          allSongsArray.push(songId);
         });
 
+        // Format all songs in the allSongsArray
+        allSongsFormattedArray = await Promise.all(allSongsArray.map(getFormattedSong));
 
-        async function getFormattedSong(songId) {
-            var accessToken = localStorage.getItem('accessToken');
+        console.log('All Songs Array:', allSongsArray);
+        console.log('All Songs Formatted Array:', allSongsFormattedArray);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
 
-            try {
-                const response = await fetch(`https://api.spotify.com/v1/tracks/${songId}`, {
-                    headers: {
-                        'Authorization': 'Bearer ' + accessToken
-                    }
-                });
-                const data = await response.json();
-                var songTitle = data.name;
-                var artistName = data.artists[0].name; // Assuming only one artist per track
-                return songTitle + ' - ' + artistName;
-            } catch (error) {
-                console.error('Error:', error);
-                return 'Unknown Song';
-            }
-        }
 
-        document.getElementById('download-btn').addEventListener('click', function () {
-            var gridContainer = document.getElementById('grid-container');
-            html2pdf().from(gridContainer).save('grids.pdf');
+    document.getElementById('print-form').addEventListener('submit', async function (event) {
+      event.preventDefault();
+
+      var numSongs = parseInt(document.getElementById('num-songs').value);
+      var gridSizeX = parseInt(document.getElementById('grid-size-x').value);
+      var gridSizeY = parseInt(document.getElementById('grid-size-y').value);
+      var numPlayers = parseInt(document.getElementById('num-players').value);
+
+      var gridContainer = document.getElementById('grid-container');
+      gridContainer.innerHTML = '';
+
+      for (var i = 1; i <= numPlayers; i++) {
+        var array = await generateArray(gridSizeX, gridSizeY, numSongs);
+
+        var card = document.createElement('div');
+        card.className = 'card';
+
+        var playerLabel = document.createElement('h3');
+        playerLabel.textContent = 'Player ' + i;
+
+        var grid = document.createElement('div');
+        grid.className = 'grid-container';
+        grid.style.setProperty('--grid-size-x', gridSizeX);
+        grid.style.setProperty('--grid-size-y', gridSizeY);
+
+        array.forEach(function (item) {
+          var gridItem = document.createElement('div');
+          gridItem.className = 'grid-item';
+          gridItem.textContent = item;
+          grid.appendChild(gridItem);
         });
 
-        async function generateArray(gridSizeX, gridSizeY, numSongs) {
-            var arraySize = gridSizeX * gridSizeY;
-            var array = [];
+        card.appendChild(playerLabel);
+        card.appendChild(grid);
+        gridContainer.appendChild(card);
+      }
+    });
 
-            // Generate an array of all possible song indexes
-            var allIndexes = [];
-            for (var i = 0; i < numSongs; i++) {
-                allIndexes.push(i);
-            }
 
-            // Shuffle the array of indexes
-            for (var j = allIndexes.length - 1; j > 0; j--) {
-                var randomIndex = Math.floor(Math.random() * (j + 1));
-                var temp = allIndexes[j];
-                allIndexes[j] = allIndexes[randomIndex];
-                allIndexes[randomIndex] = temp;
-            }
+    async function getFormattedSong(songId) {
+      var accessToken = localStorage.getItem('accessToken');
 
-            // Fill the grid array with song titles
-            for (var row = 0; row < gridSizeY; row++) {
-                for (var col = 0; col < gridSizeX; col++) {
-                    var index = row * gridSizeX + col;
-                    var songIndex = allIndexes[index % numSongs];
-                    var songTitle = allSongsFormattedArray[songIndex];
-                    array.push(songTitle);
-                }
-            }
+      try {
+        const response = await fetch(`https://api.spotify.com/v1/tracks/${songId}`, {
+          headers: {
+            'Authorization': 'Bearer ' + accessToken
+          }
+        });
+        const data = await response.json();
+        var songTitle = data.name;
+        var artistName = data.artists[0].name; // Assuming only one artist per track
+        return songTitle + ' - ' + artistName;
+      } catch (error) {
+        console.error('Error:', error);
+        return 'Unknown Song';
+      }
+    }
 
-            return Promise.resolve(array);
+    document.getElementById('download-btn').addEventListener('click', function () {
+      var gridContainer = document.getElementById('grid-container');
+      html2pdf().from(gridContainer).save('Spotify-Bingo.pdf');
+    });
+
+    async function generateArray(gridSizeX, gridSizeY, numSongs) {
+      var arraySize = gridSizeX * gridSizeY;
+      var array = [];
+
+      // Generate an array of all possible song indexes
+      var allIndexes = [];
+      for (var i = 0; i < numSongs; i++) {
+        allIndexes.push(i);
+      }
+
+      // Shuffle the array of indexes
+      for (var j = allIndexes.length - 1; j > 0; j--) {
+        var randomIndex = Math.floor(Math.random() * (j + 1));
+        var temp = allIndexes[j];
+        allIndexes[j] = allIndexes[randomIndex];
+        allIndexes[randomIndex] = temp;
+      }
+
+      // Fill the grid array with song titles
+      for (var row = 0; row < gridSizeY; row++) {
+        for (var col = 0; col < gridSizeX; col++) {
+          var index = row * gridSizeX + col;
+          var songIndex = allIndexes[index % numSongs];
+          var songTitle = allSongsFormattedArray[songIndex];
+          array.push(songTitle);
         }
+      }
 
+      return Promise.resolve(array);
+    }
 
-
-        function getSongTitle(songIndex) {
-            return allSongsArray[songIndex];
-        }
-    </script>
+    function getSongTitle(songIndex) {
+      return allSongsArray[songIndex];
+    }
+  </script>
 </body>
 
 </html>
